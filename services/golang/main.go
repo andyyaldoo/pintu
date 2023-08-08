@@ -19,6 +19,7 @@ func headers(w http.ResponseWriter, req *http.Request) {
 }
 
 func main() {
+	http.HandleFunc("/", hello)
 	http.HandleFunc("/ping", hello)
 	http.HandleFunc("/headers", headers)
 
