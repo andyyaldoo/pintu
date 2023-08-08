@@ -47,9 +47,6 @@ jobs:
         with:
           name: gobin
 
-      - run: file bin/main.out
-      - run: du bin/main.out
-
       - name: Build and push
         uses: docker/build-push-action@v4
         with:
@@ -65,4 +62,4 @@ jobs:
         run: kubectl get pods -A
 
       - name: helm deploy
-        run: helm upgrade --install --create-namespace --atomic -f golang-values.yaml --namespace pintu golang deploy/charts/http --debug --dry-run
+        run: helm upgrade --install --create-namespace --atomic -f golang-values.yaml --namespace pintu golang ../../deploy/charts/http --debug --dry-run
