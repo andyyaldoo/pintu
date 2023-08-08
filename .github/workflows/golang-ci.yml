@@ -21,9 +21,7 @@ jobs:
           cache-dependency-path: 'services/golang/go.sum'
 
       - name: Build
-        run: go build -v -o bin/main.out ./...
-
-      - run: pwd && ls -lah
+        run: go build -v -o bin/main.out main.go
 
       - uses: actions/upload-artifact@v2
         with:
@@ -49,6 +47,9 @@ jobs:
         with:
           name: gobin
 
+      - run: file bin/main.out
+      - run: du bin/main.out
+
       - name: Build and push
         uses: docker/build-push-action@v4
         with:
@@ -56,3 +57,12 @@ jobs:
           file: ./services/golang/deploy/Dockerfile
           push: true
           tags: andyyaldoo/pintu:golang
+
+      - name: Start minikube
+        uses: medyagh/setup-minikube@latest
+      # now you can run kubectl to see the pods in the cluster
+      - name: Try the cluster!
+        run: kubectl get pods -A
+
+      - name: helm deploy
+        run: helm upgrade --install --create-namespace --atomic -f golang-values.yaml --namespace pintu golang deploy/charts/http --debug --dry-run
