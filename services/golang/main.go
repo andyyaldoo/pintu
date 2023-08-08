@@ -2,11 +2,12 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 )
 
 func hello(w http.ResponseWriter, req *http.Request) {
-	fmt.Fprintf(w, "hello\n")
+	fmt.Fprintf(w, "pong\n")
 }
 
 func headers(w http.ResponseWriter, req *http.Request) {
@@ -18,8 +19,9 @@ func headers(w http.ResponseWriter, req *http.Request) {
 }
 
 func main() {
-	http.HandleFunc("/hello", hello)
+	http.HandleFunc("/ping", hello)
 	http.HandleFunc("/headers", headers)
 
-	http.ListenAndServe(":8090", nil)
+	log.Println("Listening...")
+	http.ListenAndServe(":3000", nil)
 }
