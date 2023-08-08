@@ -69,5 +69,6 @@ jobs:
         run: |
           minikube service list
           minikube service golang-http -n pintu --url
-          echo -n "------------------testing the service------------------"
+          echo  "------------------testing the service------------------"
           curl $(minikube service golang-http -npintu --url)/headers
+          curl $(minikube service golang-http -npintu --url)/ping
