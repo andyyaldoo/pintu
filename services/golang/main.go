@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 )
 
 func hello(w http.ResponseWriter, req *http.Request) {
@@ -23,6 +24,10 @@ func main() {
 	http.HandleFunc("/ping", hello)
 	http.HandleFunc("/headers", headers)
 
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "80"
+	}
 	log.Println("Listening...")
-	http.ListenAndServe(":3000", nil)
+	http.ListenAndServe(fmt.Sprintf(":%s", port), nil)
 }
