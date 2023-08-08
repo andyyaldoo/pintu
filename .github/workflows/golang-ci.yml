@@ -62,4 +62,4 @@ jobs:
         run: kubectl get pods -A
 
       - name: helm deploy
-        run: helm upgrade --install --create-namespace --atomic -f golang-values.yaml --namespace pintu golang ../../deploy/charts/http --debug --dry-run
+        run: pwd && ls && helm upgrade --install --create-namespace --atomic -f ../../deploy/helm/http/golang-values.yaml --namespace pintu golang ../../deploy/helm/http --debug --timeout 60s --dry-run
