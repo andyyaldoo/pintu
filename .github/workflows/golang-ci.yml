@@ -21,7 +21,7 @@ jobs:
           cache-dependency-path: 'services/golang/go.sum'
 
       - name: Build
-        run: go build -v -o bin/main.out main.go
+        run: CGO_ENABLED=0 go build -v -o bin/main.out main.go
 
       - uses: actions/upload-artifact@v2
         with:
