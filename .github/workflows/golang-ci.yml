@@ -62,4 +62,12 @@ jobs:
         run: kubectl get pods -A
 
       - name: helm deploy
-        run: pwd && ls && helm upgrade --install --create-namespace --atomic -f ../../deploy/helm/http/golang-values.yaml --namespace pintu golang ../../deploy/helm/http --debug --timeout 60s --dry-run
+        working-directory: deploy/helm/http
+        run: helm upgrade --install --create-namespace --atomic -f golang-values.yaml --namespace pintu golang . --debug --timeout 60s
+
+      - name: Test service URLs
+        run: |
+          minikube service list
+          minikube service golang-http -n pintu --url
+          echo -n "------------------testing the service------------------"
+          curl $(minikube service golang-http -npintu --url)/headers
