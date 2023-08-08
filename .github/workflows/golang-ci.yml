@@ -21,7 +21,14 @@ jobs:
           cache-dependency-path: 'services/golang/go.sum'
 
       - name: Build
-        run: go build -v ./...
+        run: go build -v -o bin/main.out ./...
+
+      - run: pwd && ls -lah
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: gobin
+          path: services/golang/bin/main.out
 
       - name: Test
         run: go test -v ./... -coverprofile=c.out
@@ -38,10 +45,14 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+      - uses: actions/download-artifact@v2
+        with:
+          name: gobin
+
       - name: Build and push
         uses: docker/build-push-action@v4
         with:
-          context: .
+          context: ./services/golang
           file: ./services/golang/deploy/Dockerfile
           push: true
           tags: andyyaldoo/pintu:golang
