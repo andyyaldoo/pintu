@@ -1,0 +1,4 @@
+image:
+  repository: andyyaldoo/pintu
+  pullPolicy: Always
+  tag: "golang"
