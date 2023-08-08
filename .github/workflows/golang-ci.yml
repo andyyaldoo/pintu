@@ -42,5 +42,6 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           context: .
+          file: ./services/golang/deploy/Dockerfile
           push: true
           tags: andyyaldoo/pintu:golang
