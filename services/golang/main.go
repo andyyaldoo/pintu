@@ -25,6 +25,7 @@ func main() {
 
 	// Routes
 	rtr := mux.NewRouter()
+	// This route is added for k8s liveness probe
 	rtr.HandleFunc("/", hello)
 	rtr.HandleFunc("/ping", hello)
 	rtr.HandleFunc("/headers", headers)
