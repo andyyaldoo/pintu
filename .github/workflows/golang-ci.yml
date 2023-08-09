@@ -1,0 +1,75 @@
+name: golang-ci
+
+on:
+  pull_request:
+    paths:
+      - "services/golang/**"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: services/golang
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.20'
+          cache-dependency-path: 'services/golang/go.sum'
+
+      - name: Build
+        run: CGO_ENABLED=0 go build -v -o bin/main.out main.go
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: gobin
+          path: services/golang/bin/main.out
+
+      - name: Test
+        run: go test -v ./... -coverprofile=c.out
+
+      - uses: checkity/upload@v1
+        with:
+          file-pattern: '**/c.out'
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          base-enabled: false
+          overall-target: '0'
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - uses: actions/download-artifact@v3
+        with:
+          name: gobin
+
+      - name: Build and push
+        uses: docker/build-push-action@v4
+        with:
+          context: ./services/golang
+          file: ./services/golang/deploy/Dockerfile
+          push: true
+          tags: andyyaldoo/pintu:golang
+
+      - name: Start minikube
+        uses: medyagh/setup-minikube@latest
+      # now you can run kubectl to see the pods in the cluster
+      - name: Try the cluster!
+        run: kubectl get pods -A
+
+      - name: helm deploy
+        working-directory: deploy/helm/http
+        run: helm upgrade --install --create-namespace --atomic -f golang-values.yaml --namespace pintu golang . --debug --timeout 60s
+
+      - name: Test service URLs
+        run: |
+          minikube service list
+          minikube service golang-http -n pintu --url
+          echo  "------------------testing the service------------------"
+          echo "/headers" && curl -s $(minikube service golang-http -npintu --url)/headers
+          echo "/ping" && curl -s $(minikube service golang-http -npintu --url)/ping

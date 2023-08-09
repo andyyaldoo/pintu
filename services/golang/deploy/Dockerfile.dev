@@ -1,0 +1,19 @@
+FROM golang:1.20 AS build
+
+WORKDIR /opt
+
+COPY . .
+
+RUN go mod download
+
+RUN CGO_ENABLED=0 go build -o main.out cmd/main.go
+
+FROM alpine
+
+WORKDIR /opt
+
+COPY --from=build opt/main.out ./main.out
+
+EXPOSE 3000
+
+ENTRYPOINT ["/opt/main.out"]
