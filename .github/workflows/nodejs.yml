@@ -40,6 +40,6 @@ jobs:
       - name: Test service URLs
         run: |
           minikube service list
-          minikube service node-http -n pintu --url
+          minikube service nodejs-http -n pintu --url
           echo  "------------------testing the service------------------"
-          echo "/" && curl -s $(minikube service golang-http -npintu --url)/
+          echo "/" && curl -s $(minikube service nodejs-http -npintu --url)/
