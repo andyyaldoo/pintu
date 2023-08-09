@@ -5,6 +5,8 @@ import (
 	"log"
 	"net/http"
 	"os"
+
+	"github.com/gorilla/mux"
 )
 
 func hello(w http.ResponseWriter, req *http.Request) {
@@ -20,14 +22,23 @@ func headers(w http.ResponseWriter, req *http.Request) {
 }
 
 func main() {
-	http.HandleFunc("/", hello)
-	http.HandleFunc("/ping", hello)
-	http.HandleFunc("/headers", headers)
+
+	// Routes
+	rtr := mux.NewRouter()
+	rtr.HandleFunc("/", hello)
+	rtr.HandleFunc("/ping", hello)
+	rtr.HandleFunc("/headers", headers)
+	http.Handle("/", rtr)
 
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "80"
 	}
+
 	log.Println("Listening...")
-	http.ListenAndServe(fmt.Sprintf(":%s", port), nil)
+	err := http.ListenAndServe(fmt.Sprintf(":%s", port), nil)
+	if err != nil {
+		log.Println(err)
+		os.Exit(255)
+	}
 }
