@@ -1,0 +1,7 @@
+image:
+  repository: andyyaldoo/pintu
+  pullPolicy: Always
+
+# Setting service.type to NodePort so that service can be `curl`ed in CI/CD pipeline
+service:
+  type: NodePort

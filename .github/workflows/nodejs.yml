@@ -59,7 +59,7 @@ jobs:
 
       - name: Deploy service to k8s cluster
         working-directory: deploy/helm/http
-        run: helm upgrade --install --create-namespace --atomic -f nodejs-values.yaml --namespace pintu nodejs . --debug --timeout 60s
+        run: helm upgrade --install --create-namespace --atomic -f common-values.yaml -f nodejs-values.yaml --namespace pintu nodejs . --debug --timeout 60s
 
       - name: Test service URLs
         run: |

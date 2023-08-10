@@ -1,9 +1,11 @@
-name: golang-ci
+name: golang
 
 on:
   pull_request:
     paths:
       - "services/golang/**"
+      - "deploy/**"
+      - ".github/workflows/golang.yml"
 
 jobs:
   build:
@@ -58,13 +60,13 @@ jobs:
 
       - name: Start minikube
         uses: medyagh/setup-minikube@latest
-      # now you can run kubectl to see the pods in the cluster
-      - name: Try the cluster!
+
+      - name: Check system pods are running
         run: kubectl get pods -A
 
-      - name: helm deploy
+      - name: Deploy service to k8s cluser
         working-directory: deploy/helm/http
-        run: helm upgrade --install --create-namespace --atomic -f golang-values.yaml --namespace pintu golang . --debug --timeout 60s
+        run: helm upgrade --install --create-namespace --atomic -f common-values.yaml -f golang-values.yaml --namespace pintu golang . --debug --timeout 60s
 
       - name: Test service URLs
         run: |
