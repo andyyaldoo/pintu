@@ -21,19 +21,32 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+      - name: Cache dependency
+        uses: actions/cache@v3
+        id: cache-deps
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
+
+      - name: Install dependencies
+        if: steps.cache-deps.outputs.cache-hit != 'true'
+        run: npm install
+
       - name: Build and push
         uses: docker/build-push-action@v4
         with:
           context: ./services/nodejs
           file: ./services/nodejs/deploy/Dockerfile
           push: true
-          # TODO: add short commit hash?
           tags: andyyaldoo/pintu:nodejs
 
       - name: Start minikube
         uses: medyagh/setup-minikube@latest
 
-      - name: helm deploy
+      - name: Check system pods are running
+        run: kubectl get pods -A
+
+      - name: Deploy service to k8s cluster
         working-directory: deploy/helm/http
         run: helm upgrade --install --create-namespace --atomic -f nodejs-values.yaml --namespace pintu nodejs . --debug --timeout 60s
 

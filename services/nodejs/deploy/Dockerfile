@@ -1,8 +1,8 @@
 FROM node:14
 
 WORKDIR /opt
-COPY . .
 
-RUN npm install
+COPY index.js index.js
+COPY node_modules node_modules
 
 ENTRYPOINT ["node", "index.js"]
