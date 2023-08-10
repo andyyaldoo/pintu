@@ -5,6 +5,7 @@ on:
     paths:
       - "services/nodejs/**"
       - "deploy/**"
+      - ".github/workflows/nodejs.yml"
 
 jobs:
   build:
