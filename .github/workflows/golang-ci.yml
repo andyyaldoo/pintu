@@ -6,6 +6,12 @@ on:
       - "services/golang/**"
       - "deploy/**"
       - ".github/workflows/golang.yml"
+  push:
+    branches: [ "main" ]
+    paths:
+      - "services/golang/**"
+      - "deploy/**"
+      - ".github/workflows/golang.yml"
 
 jobs:
   build:

@@ -6,6 +6,12 @@ on:
       - "services/nodejs/**"
       - "deploy/**"
       - ".github/workflows/nodejs.yml"
+  push:
+    branches: [ "main" ]
+    paths:
+      - "services/nodejs/**"
+      - "deploy/**"
+      - ".github/workflows/nodejs.yml"
 
 jobs:
   build:
